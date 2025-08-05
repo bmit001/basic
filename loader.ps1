@@ -1,9 +1,19 @@
+# => Force TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+# Download and execute BASICS.bat from GitHub
+$url = 'https://raw.githubusercontent.com/bmit001/basic/main/BASICS.bat'
+$temp = "$env:TEMP\BASICS.bat"
+
 try {
-    Write-Host "Downloading and executing from GitHub..."
-    $url = "https://github.com/bmit001/basic/raw/refs/heads/main/BASICS.bat"   # <-- Replace with actual installer or script
-    $temp = "$env:TEMP\BASICS.bat"
-    Invoke-WebRequest -Uri $url -OutFile $temp -UseBasicParsing
-    Start-Process $temp -Wait
+  Invoke-WebRequest -Uri $url -OutFile $temp -UseBasicParsing
 } catch {
-    Write-Host "? Download failed. Check URL or Internet connection."
+  try {
+    Invoke-RestMethod -Uri $url | Out-File $temp -Encoding ASCII
+  } catch {
+    Write-Host "❌ Download failed. Check TLS, internet, or URL." -ForegroundColor Red
+    exit 1
+  }
 }
+
+Start-Process $temp -Wait
