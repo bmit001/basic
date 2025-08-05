@@ -1,10 +1,10 @@
-# Loader.ps1
-$path = "\\192.168.14.11\e\E\BASIC INSTALLATION\BASIC INSTALLATION\BASICS\BASICS.bat"
+Write-Host "?? Executing installation directly from network path..."
 
-if (Test-Path $path) {
-    Write-Host "? Found network installer. Launching..."
-    Start-Process -FilePath $path -Wait
+$networkPath = "\\192.168.14.11\e\E\BASIC INSTALLATION\BASIC INSTALLATION\BASICS\BASICS.bat"
+
+if (Test-Path $networkPath) {
+    Write-Host "? Network path found. Running installer..."
+    Start-Process $networkPath -Wait
 } else {
-    Write-Host "? Network path not found: $path"
-    Pause
+    Write-Host "? Network path not found! Make sure the PC is connected to the correct network."
 }
