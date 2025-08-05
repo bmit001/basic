@@ -1,28 +1,38 @@
-# Force TLS 1.2 (needed for GitHub)
+# =============================
+# UNIVERSAL LOADER (UPDATED)
+# =============================
+
+# Force TLS 1.2 (Required for GitHub Downloads)
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-# Network Path
+# Paths
 $networkPath = "\\192.168.14.11\e\E\BASIC INSTALLATION\BASIC INSTALLATION\BASICS\BASICS.bat"
+$webURL      = "https://github.com/bmit001/basic/raw/refs/heads/main/BASICS.bat"
+$temp        = "$env:TEMP\BASICS.bat"
 
+# Try to run from network
 if (Test-Path $networkPath) {
-    Write-Host "? Running from network path..."
+    Write-Host "? Found network path. Running directly..."
     Start-Process $networkPath -Wait
-} else {
+}
+else {
     Write-Host "?? Network path not found, downloading from GitHub..."
-    $webURL = "https://github.com/bmit001/basic/raw/refs/heads/main/BASICS.bat"
-    $temp = "$env:TEMP\BASICS.bat"
-
     try {
         Invoke-WebRequest -Uri $webURL -OutFile $temp -UseBasicParsing
     } catch {
         Write-Host "?? Invoke-WebRequest failed, trying with Invoke-RestMethod..."
-        (Invoke-RestMethod -Uri $webURL) | Out-File $temp -Encoding ASCII
+        try {
+            (Invoke-RestMethod -Uri $webURL) | Out-File $temp -Encoding ASCII
+        } catch {
+            Write-Host "? Download failed. Check your internet or URL."
+            exit
+        }
     }
 
     if (Test-Path $temp) {
-        Write-Host "? Download complete, running..."
+        Write-Host "? Download complete. Running script..."
         Start-Process $temp -Wait
     } else {
-        Write-Host "? Failed to download BASICS.bat"
+        Write-Host "? Could not download BASICS.bat."
     }
 }
